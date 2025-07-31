@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart {{ asset }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>
+    {% if "funding" in request.path %}
+        Biểu đồ Funding Rate: {{ asset }}
+    {% else %}
+        Biểu đồ Cross Margin: {{ asset }}
+    {% endif %}
+    </h2>
+    <canvas id="myChart"></canvas>
+    <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: 'Hourly Rate',
+                data: {{ values|safe }},
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: false }
+            }
+        }
+    });
+    </script>
+</body>
+</html>

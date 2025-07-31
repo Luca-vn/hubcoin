@@ -1,0 +1,5 @@
+Flask
+requests
+pandas
+python-telegram-bot==20.7
+apscheduler

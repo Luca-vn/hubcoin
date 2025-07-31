@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bot Action Chart - {{ asset.upper() }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Biểu đồ Bot Action: {{ asset.upper() }}</h2>
+    <canvas id="botChart" width="1000" height="400"></canvas>
+
+    <script>
+        const labels = {{ timestamps|tojson }};
+        const priceData = {{ price_pct|tojson }};
+        const volumeData = {{ volume_pct|tojson }};
+        const botActions = {{ bot_actions|tojson }};
+
+        const pointStyles = [];
+        const pointColors = [];
+
+        let countGom = 0, countXa = 0, countGomAm = 0, countXaAm = 0, countTrap = 0;
+
+        botActions.forEach(action => {
+            if (action.includes("🔵")) {
+                pointStyles.push("triangle");
+                pointColors.push("blue");
+                countGom++;
+            } else if (action.includes("🔴")) {
+                pointStyles.push("triangle");
+                pointColors.push("red");
+                countXa++;
+            } else if (action.includes("🟡")) {
+                pointStyles.push("triangle");
+                pointColors.push("gold");
+                countGomAm++;
+            } else if (action.includes("🖤")) {
+                pointStyles.push("triangle");
+                pointColors.push("black");
+                countXaAm++;
+            } else if (action.includes("📋")) {
+                pointStyles.push("triangle");
+                pointColors.push("deeppink");
+                countTrap++;
+            } else {
+                // ✅ Nếu là "không rõ", ta dùng chấm nhỏ trong suốt để ẩn luôn
+                pointStyles.push("circle");
+                pointColors.push("rgba(0,0,0,0)");  // Màu trong suốt
+            }
+        });
+
+        const ctx = document.getElementById('botChart').getContext('2d');
+        const botChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '% Price Change',
+                    data: priceData,
+                    borderColor: 'blue',
+                    backgroundColor: 'blue',
+                    tension: 0.1,
+                    pointStyle: pointStyles,
+                    pointRadius: 10,
+                    pointHoverRadius: 12,
+                    pointBackgroundColor: pointColors
+                }, {
+                    label: '% Volume Change',
+                    data: volumeData,
+                    borderColor: 'orange',
+                    backgroundColor: 'orange',
+                    tension: 0.1,
+                    borderDash: [5, 5],
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            afterBody: function(context) {
+                                let index = context[0].dataIndex;
+                                return 'Bot Action: ' + botActions[index];
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Phân tích hành vi bot: ' + '{{ asset.upper() }}'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: '% Change'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Hiển thị thống kê dưới chart
+        document.write("<div style='margin-top:20px;'>");
+        document.write("<b>Thống kê hành vi bot:</b><br>");
+        document.write("<span style='color:blue;'>🔵 Gom mạnh</span>: " + countGom + " lần<br>");
+        document.write("<span style='color:red;'>🔴 Xả mạnh</span>: " + countXa + " lần<br>");
+        document.write("<span style='color:gold;'>🟡 Gom âm thầm</span>: " + countGomAm + " lần<br>");
+        document.write("<span style='color:black;'>🖤 Xả âm thầm</span>: " + countXaAm + " lần<br>");
+        document.write("<span style='color:deeppink;'>📋 Trap</span>: " + countTrap + " lần<br>");
+        document.write("</div>");
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lucabrasi Market Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #200; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        a { text-decoration: none; color: #0066cc; }
+    </style>
+</head>
+<body>
+    <h2>Lucabrasi Market Dashboard</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Asset</th>
+                <th>Price (USDT)</th>
+                <th>Price (BTC)</th>
+                <th>Volume (24h)</th>
+                <th>Price Change %</th>
+                <th>Volume Change %</th>
+                <th>Bot Action</th>
+                <th>Cross Margin</th>
+                <th style="display: none;">Next C_Margin</th>
+                <th>Funding Rate</th>
+                <th>Order Book</th>
+                <th>Log View</th>
+                <th>Bot_chart</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.asset }}</td>
+                <td>{{ row.price_usdt }}</td>
+                <td>{{ row.price_btc }}</td>
+                <td>{{ row.volume }}</td>
+                <td>{{ row.price_pct }}</td>
+                <td>{{ row.volume_pct }}</td>
+                <td>{{ row.bot_action }}</td>
+                <td>{{ row.cross_margin }}</td>
+                <td style="display: none;">{{ row.next_margin }}</td>
+                <td>{{ row.funding_rate }}</td>
+                <td>{{ row.order_book_bias }}</td>
+                <td>{{ row.log_view|safe }}</td>
+                <td><a href="/chart/bot/{{ row.asset }}" target="_blank">Chart</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
